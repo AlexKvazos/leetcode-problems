@@ -1,23 +1,58 @@
+const grids = [
+  { x: 0, y: 0 },
+  { x: 3, y: 0 },
+  { x: 6, y: 0 },
+  { x: 0, y: 3 },
+  { x: 3, y: 3 },
+  { x: 6, y: 3 },
+  { x: 0, y: 6 },
+  { x: 3, y: 6 },
+  { x: 6, y: 6 },
+];
+
 function isValidSudoku(board: string[][]): boolean {
-  let result = false;
+  const sanitizedRows = board.map((row) => row.filter((item) => item !== '.'));
+  const sanitizedColumns = [];
+
+  for (let y = 0; y < 9; y++) {
+    const column = [];
+    for (let x = 0; x < 9; x++) {
+      const item = board[x][y];
+      if (item !== '.') column.push(board[x][y]);
+    }
+    sanitizedColumns.push(column);
+  }
 
   let validRows = true;
-  let validColumns = true;
-  for (let x = 0; x < 9; x++) {
-    for (let y = 0; y < 9; y++) {
-      let row = board[x];
-      let numbers = row.filter((n) => n.match(/\d/));
-      if (containsDuplicates(numbers)) validRows = false;
+  for (let row of sanitizedRows) {
+    if (containsDuplicates(row)) validRows = false;
+  }
 
-      for let (x = 0; x < 0; x++) {
-        let column = y
-        let numbers: number[] = [];
+  let validCols = true;
+  for (let col of sanitizedColumns) {
+    if (containsDuplicates(col)) validCols = false;
+  }
 
-      }
+  let validGrids = true;
+  for (let grid of grids) {
+    if (containsDuplicates(sanitizedGrid(board, grid.x, grid.y))) {
+      validGrids = false;
     }
   }
 
-  return validRows && validColumns;
+  return validRows && validCols && validGrids;
+}
+
+function sanitizedGrid(board: string[][], x: number, y: number) {
+  let numbers = [];
+  for (let _y = y; _y < y + 3; _y++) {
+    for (let _x = x; _x < x + 3; _x++) {
+      numbers.push(board[_x][_y]);
+    }
+  }
+  const sanitized = numbers.filter((item) => item !== '.');
+  console.log(sanitized);
+  return sanitized;
 }
 
 function containsDuplicates(arr: any[]): boolean {
@@ -27,14 +62,14 @@ function containsDuplicates(arr: any[]): boolean {
 // test
 console.log(
   isValidSudoku([
-    ["5", "3", ".", ".", "7", ".", ".", ".", "."],
-    ["6", ".", ".", "1", "9", "5", ".", ".", "."],
-    [".", "9", "8", ".", ".", ".", ".", "6", "."],
-    ["8", ".", ".", ".", "6", ".", ".", ".", "3"],
-    ["4", ".", ".", "8", ".", "3", ".", ".", "1"],
-    ["7", ".", ".", ".", "2", ".", ".", ".", "6"],
-    [".", "6", ".", ".", ".", ".", "2", "8", "."],
-    [".", ".", ".", "4", "1", "9", ".", ".", "5"],
-    [".", ".", ".", ".", "8", ".", ".", "7", "9"],
+    ['1', '2', '.', '.', '.', '.', '6', '.', '7'],
+    ['.', '.', '.', '.', '.', '.', '.', '.', '5'],
+    ['.', '.', '9', '.', '6', '.', '4', '.', '.'],
+    ['.', '6', '.', '.', '.', '.', '.', '.', '.'],
+    ['.', '.', '.', '.', '4', '.', '.', '7', '.'],
+    ['.', '.', '.', '.', '.', '.', '.', '.', '.'],
+    ['.', '.', '.', '5', '.', '.', '.', '.', '.'],
+    ['.', '.', '.', '.', '.', '.', '.', '.', '2'],
+    ['.', '9', '.', '.', '.', '.', '.', '.', '7'],
   ])
 );
